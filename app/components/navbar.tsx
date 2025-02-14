@@ -17,7 +17,9 @@ export default function NavBar() {
     <nav className="relative">
       <div className="rounded-[1.2rem] border-[1px] border-[#197686] font-[JejuMyeongjo] px-[0.75rem] py-2 backdrop-blur-[2px] flex justify-between items-center mb-10">
         <div className="logo cursor-pointer" onClick={handleLogoClick}>
-          <Image src="/logo.png" alt="Logo" width={80} height={80} />
+          <Link href={"/"}>
+            <Image src="/logo.png" alt="Logo" width={80} height={80} />
+          </Link>
         </div>
 
         <div className="menu space-x-5 text-[#B3B3B3] lg:block hidden">
@@ -28,7 +30,7 @@ export default function NavBar() {
 
         <div className="button">
           <Link href="/">
-            <Button text="MY TICKETS ⟶" />
+            <Button text="MY TICKETS " />
           </Link>
         </div>
       </div>
