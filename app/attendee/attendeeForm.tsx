@@ -12,7 +12,6 @@ import Image from "next/image";
 
 export default function AttendeeForm({ onFormSubmit }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [cloudinaryUrl, setCloudinaryUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

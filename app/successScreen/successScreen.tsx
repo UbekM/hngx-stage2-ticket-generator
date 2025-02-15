@@ -64,7 +64,9 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
             </div>
             <div className="box absolute top-7 w-[290px] h-[470px] rounded-2xl border-2 border-[#24A0B5]">
               <div className="text-center space-y-1 p-2 pb-6">
-                <h2 className="font-roadRage text-4xl">Techember Fest "25</h2>
+                <h2 className="font-roadRage text-4xl">
+                  Techember Fest &quot;25
+                </h2>
                 <div className="text-center text-xs">
                   <p>
                     📍 04 Rumens road, Ikoyi, Lagos{" "}
