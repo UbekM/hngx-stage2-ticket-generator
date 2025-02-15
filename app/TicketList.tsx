@@ -1,4 +1,5 @@
 /** @format */
+
 "use client";
 
 import { useState } from "react";
@@ -6,14 +7,14 @@ import Link from "next/link";
 import Box from "./components/box";
 import Button from "./components/button";
 
-export default function TicketBox() {
+export default function TicketList({ onTicketSelect }) {
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
   const [ticketCount, setTicketCount] = useState<number>(1);
   const [error, setError] = useState<string>("");
 
   const handleSelect = (type: string) => {
     setSelectedTicket(type);
-    setError(""); // Clear errors when a valid selection is made
+    setError("");
   };
 
   const handleProceed = () => {
@@ -25,7 +26,8 @@ export default function TicketBox() {
       setError("Please select at least one ticket.");
       return;
     }
-    setError(""); // Clear errors and proceed
+    setError("");
+    onTicketSelect({ type: selectedTicket, count: ticketCount });
   };
 
   return (
@@ -41,7 +43,6 @@ export default function TicketBox() {
 
           <Box text="bg-[#08252B] border-[#0E464F] p-4">
             <div className="space-y-8">
-              {/* Ticket Type Selection */}
               <div>
                 <p className="text-sm pb-2">Select Ticket Type:</p>
                 <Box text="grid md:grid-cols-3 gap-4 bg-[#052228] border-[1px] border-[#07373F]">
@@ -65,7 +66,6 @@ export default function TicketBox() {
                 </Box>
               </div>
 
-              {/* Number of Tickets */}
               <div>
                 <p className="text-sm pb-2">Number of Tickets:</p>
                 <select
@@ -82,22 +82,18 @@ export default function TicketBox() {
                 </select>
               </div>
 
-              {/* Error Message */}
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
-              {/* Buttons */}
               <div className="flex gap-3 flex-col lg:flex-row w-full">
                 <Link href="/" className="w-full">
                   <Button className="order-2 lg:order-2" text="Cancel" />
                 </Link>
-                <Link href="/attendee" className="w-full">
-                  <button
-                    className="w-full bg-[#24A0B5] order-1 lg:order-1 mb-2 p-3 rounded-lg text-white font-[JejuMyeongjo] text-sm"
-                    onClick={handleProceed}
-                  >
-                    Next
-                  </button>
-                </Link>
+                <button
+                  className="w-full bg-[#24A0B5] order-1 lg:order-1 mb-2 p-3 rounded-lg text-white font-[JejuMyeongjo] text-sm"
+                  onClick={handleProceed}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </Box>

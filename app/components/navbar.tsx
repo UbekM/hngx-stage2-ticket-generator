@@ -24,7 +24,7 @@ export default function NavBar() {
 
         <div className="menu space-x-5 text-[#B3B3B3] lg:block hidden">
           <Link href="/">Events</Link>
-          <Link href="/about">My Tickets</Link>
+          <Link href="/">My Tickets</Link>
           <Link href="/about">About Project</Link>
         </div>
 

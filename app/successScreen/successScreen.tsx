@@ -1,11 +1,34 @@
 /** @format */
 
+"use client";
+
 import Link from "next/link";
 import Button from "../components/button";
 import Image from "next/image";
 import Box from "../components/box";
+import { useRef } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
-export default function SuccessScreen() {
+export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
+  const ticketRef = useRef(null);
+
+  const handleDownload = async () => {
+    const ticket = ticketRef.current;
+    if (ticket) {
+      const canvas = await html2canvas(ticket);
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, "PNG", 0, 0);
+      pdf.save("ticket.pdf");
+    }
+  };
+
+  // Add a check to ensure ticketInfo and attendeeInfo are available
+  if (!ticketInfo || !attendeeInfo) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="rounded-3xl p-6 border border-[#0E464F] bg-[#041E23] mt-0 lg:mx-60 mx-0 font-[Roboto] font-light flex justify-center text-center">
       <main className="w-full">
@@ -22,12 +45,15 @@ export default function SuccessScreen() {
             <h2 className="text-3xl font-medium">Your Ticket is Booked!</h2>
             <p>
               Check your email for a copy or you can{" "}
-              <Link href="/download">
-                <strong>download</strong>
-              </Link>
+              <button onClick={handleDownload} className="underline">
+                download
+              </button>
             </p>
           </div>
-          <div className="ticket flex flex-col items-center w-full relative">
+          <div
+            className="ticket flex flex-col items-center w-full relative"
+            ref={ticketRef}
+          >
             <div className="relative">
               <Image
                 src="/bg.png"
@@ -36,11 +62,9 @@ export default function SuccessScreen() {
                 height={600}
               ></Image>
             </div>
-            {/* Content */}
             <div className="box absolute top-7 w-[290px] h-[470px] rounded-2xl border-2 border-[#24A0B5]">
               <div className="text-center space-y-1 p-2 pb-6">
-                <h2 className="font-roadRage text-4xl">Techember Fest ”25</h2>
-                <div className=" text-center"></div>
+                <h2 className="font-roadRage text-4xl">Techember Fest "25</h2>
                 <div className="text-center text-xs">
                   <p>
                     📍 04 Rumens road, Ikoyi, Lagos{" "}
@@ -48,23 +72,37 @@ export default function SuccessScreen() {
                   </p>
                 </div>
               </div>
-              <Box text="border-4 w-36 h-36 border-[#24A0B580] mx-auto pt-5 mb-5 bg-[#031E211A] backdrop-blur-sm"></Box>
+              <Box text="border-4 w-36 h-36 border-[#24A0B580] mx-auto pt-5 mb-5 bg-[#031E211A] backdrop-blur-sm">
+                {attendeeInfo.profilePhoto ? (
+                  <Image
+                    src={attendeeInfo.profilePhoto || "/placeholder.svg"}
+                    alt="Profile"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    No Photo
+                  </div>
+                )}
+              </Box>
               <Box text="m-2 py-3 rounded-lg border-[#133D44] bg-[#08343C]">
                 <div className="grid grid-cols-2 text-left gap-2 text-xs border-b border-[#12464E] ">
                   <div className="space-y-1 border-r border-[#12464E]">
                     <div className="pb-2">
                       <label htmlFor="name" className="text-gray-400">
-                        Enter your name
+                        Name
                       </label>
-                      <p>p</p>
+                      <p>{attendeeInfo.name}</p>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="pb-2">
                       <label htmlFor="name" className="text-gray-400">
-                        Enter your Email
+                        Email
                       </label>
-                      <p>p</p>
+                      <p>{attendeeInfo.email}</p>
                     </div>
                   </div>
                 </div>
@@ -74,7 +112,7 @@ export default function SuccessScreen() {
                       <label htmlFor="name" className="text-gray-400">
                         Ticket Type:
                       </label>
-                      <p>p</p>
+                      <p>{ticketInfo.type}</p>
                     </div>
                   </div>
                   <div className="space-y-1">
@@ -82,7 +120,7 @@ export default function SuccessScreen() {
                       <label htmlFor="name" className="text-gray-400">
                         Ticket for:
                       </label>
-                      <p>p</p>
+                      <p>{ticketInfo.count} person(s)</p>
                     </div>
                   </div>
                 </div>
@@ -93,15 +131,13 @@ export default function SuccessScreen() {
                         Special request?
                       </label>
                       <p className="pt-1">
-                        Nil ? Or the users sad story they write in there gets
-                        this whole space, Max of three rows
+                        {attendeeInfo.specialRequest || "No special request"}
                       </p>
                     </div>
                   </div>
                 </div>
               </Box>
             </div>
-
             <Image
               src={"/barcode.png"}
               width={250}
@@ -117,12 +153,12 @@ export default function SuccessScreen() {
                 text="Book Another Ticket"
               />
             </Link>
-            <Link href="/download" className="w-full">
-              <Button
-                className="bg-[#24A0B5] order-1 lg:order-1 mb-2 "
-                text="Download Ticket"
-              />
-            </Link>
+            <button
+              onClick={handleDownload}
+              className="w-full bg-[#24A0B5] order-1 lg:order-1 mb-2 p-3 rounded-lg text-white font-[JejuMyeongjo] text-sm"
+            >
+              Download Ticket
+            </button>
           </div>
         </div>
       </main>
