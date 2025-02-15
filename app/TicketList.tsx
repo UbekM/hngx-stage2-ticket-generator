@@ -1,34 +1,29 @@
-/** @format */
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Box from "./components/box";
 import Button from "./components/button";
 
-export default function TicketList({ onTicketSelect }) {
+// Define the expected structure of a ticket selection
+interface TicketInfo {
+  type: string;
+  count: number;
+}
+
+// Define props type
+interface TicketListProps {
+  onTicketSelectAction: (ticket: TicketInfo) => void; // Renamed function to meet Next.js naming rules
+}
+
+export default function TicketList({ onTicketSelectAction }: TicketListProps) {
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
   const [ticketCount, setTicketCount] = useState<number>(1);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const storedTicket = localStorage.getItem("selectedTicket");
-    const storedCount = localStorage.getItem("ticketCount");
-    if (storedTicket) setSelectedTicket(storedTicket);
-    if (storedCount) setTicketCount(Number(storedCount));
-  }, []);
-
   const handleSelect = (type: string) => {
     setSelectedTicket(type);
-    localStorage.setItem("selectedTicket", type);
     setError("");
-  };
-
-  const handleCountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const count = Number(e.target.value);
-    setTicketCount(count);
-    localStorage.setItem("ticketCount", count.toString());
   };
 
   const handleProceed = () => {
@@ -41,13 +36,13 @@ export default function TicketList({ onTicketSelect }) {
       return;
     }
     setError("");
-    onTicketSelect({ type: selectedTicket, count: ticketCount });
+    onTicketSelectAction({ type: selectedTicket, count: ticketCount }); // Updated function name
   };
 
   return (
-    <div className="rounded-3xl p-6 border border-[#0E464F] bg-[#041E23] mb-7 lg:mx-60 font-[Roboto] font-light ">
+    <div className="rounded-3xl p-6 border border-[#0E464F] bg-[#041E23] mb-7 lg:mx-60 font-[Roboto] font-light">
       <main>
-        <div className="flex justify-between font-[JejuMyeongjo] mb-3 items-center ">
+        <div className="flex justify-between font-[JejuMyeongjo] mb-3 items-center">
           <h1 className="text-3xl">Ticket Selection</h1>
           <p className="font-[Roboto] text-sm">Step 1/3</p>
         </div>
@@ -86,7 +81,7 @@ export default function TicketList({ onTicketSelect }) {
                   name="ticket-no"
                   className="border-[#07373F] border w-full p-3 bg-inherit rounded-lg bg-[#08252B]"
                   value={ticketCount}
-                  onChange={handleCountChange}
+                  onChange={(e) => setTicketCount(Number(e.target.value))}
                 >
                   {[...Array(6)].map((_, i) => (
                     <option key={i + 1} value={i + 1} className="bg-[#08252B]">

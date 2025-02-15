@@ -8,17 +8,29 @@ import AttendeeForm from "./attendee/attendeeForm";
 import SuccessScreen from "./successScreen/successScreen";
 import NavBar from "./components/navbar";
 
-export default function Home() {
-  const [step, setStep] = useState(1);
-  const [ticketInfo, setTicketInfo] = useState(null);
-  const [attendeeInfo, setAttendeeInfo] = useState(null);
+interface TicketInfo {
+  type: string;
+  count: number;
+}
 
-  const handleTicketSelect = (info) => {
+interface AttendeeInfo {
+  name: string;
+  email: string;
+  specialRequest?: string;
+  profilePhoto?: string;
+}
+
+export default function Home() {
+  const [step, setStep] = useState<number>(1);
+  const [ticketInfo, setTicketInfo] = useState<TicketInfo | null>(null);
+  const [attendeeInfo, setAttendeeInfo] = useState<AttendeeInfo | null>(null);
+
+  const handleTicketSelect = (info: TicketInfo) => {
     setTicketInfo(info);
     setStep(2);
   };
 
-  const handleFormSubmit = (info) => {
+  const handleFormSubmit = (info: AttendeeInfo) => {
     setAttendeeInfo(info);
     setStep(3);
   };
@@ -26,9 +38,9 @@ export default function Home() {
   return (
     <div className="md:px-14 px-6 py-5 text-white">
       <NavBar />
-      {step === 1 && <TicketList onTicketSelect={handleTicketSelect} />}
-      {step === 2 && <AttendeeForm onFormSubmit={handleFormSubmit} />}
-      {step === 3 && (
+      {step === 1 && <TicketList onTicketSelectAction={handleTicketSelect} />}
+      {step === 2 && <AttendeeForm onFormSubmitAction={handleFormSubmit} />}
+      {step === 3 && ticketInfo && attendeeInfo && (
         <SuccessScreen ticketInfo={ticketInfo} attendeeInfo={attendeeInfo} />
       )}
     </div>

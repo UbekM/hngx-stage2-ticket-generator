@@ -10,21 +10,48 @@ import { useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
-  const ticketRef = useRef(null);
+interface TicketInfo {
+  type: string;
+  count: number;
+}
+
+interface AttendeeInfo {
+  name: string;
+  email: string;
+  specialRequest?: string;
+  profilePhoto?: string;
+}
+
+interface SuccessScreenProps {
+  ticketInfo: TicketInfo;
+  attendeeInfo: AttendeeInfo;
+}
+
+export default function SuccessScreen({
+  ticketInfo,
+  attendeeInfo,
+}: SuccessScreenProps) {
+  const ticketRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = async () => {
     const ticket = ticketRef.current;
     if (ticket) {
       const canvas = await html2canvas(ticket);
       const imgData = canvas.toDataURL("image/png");
+
       const pdf = new jsPDF();
-      pdf.addImage(imgData, "PNG", 0, 0);
+
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save("ticket.pdf");
     }
   };
 
-  // Add a check to ensure ticketInfo and attendeeInfo are available
   if (!ticketInfo || !attendeeInfo) {
     return <div>Loading...</div>;
   }
@@ -32,15 +59,15 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
   return (
     <div className="rounded-3xl p-6 border border-[#0E464F] bg-[#041E23] mt-0 lg:mx-60 mx-0 font-[Roboto] font-light flex justify-center text-center">
       <main className="w-full">
-        <div className="flex justify-between font-[JejuMyeongjo] mb-3 items-center ">
+        <div className="flex justify-between font-[JejuMyeongjo] mb-3 items-center">
           <h1 className="text-3xl">Ready</h1>
           <p className="font-[Roboto] text-sm">Step 3/3</p>
         </div>
         <div className="relative mb-16">
-          <div className="rounded-lg  absolute top-0 h-1 lg:w-full w-2/3 bg-[#24A0B5] " />
-          <div className="rounded-lg bg-[#0E464F]  h-1 w-full mb-6" />
+          <div className="rounded-lg absolute top-0 h-1 lg:w-full w-2/3 bg-[#24A0B5]" />
+          <div className="rounded-lg bg-[#0E464F] h-1 w-full mb-6" />
         </div>
-        <div className="space-y-12 ">
+        <div className="space-y-12">
           <div className="text space-y-3">
             <h2 className="text-3xl font-medium">Your Ticket is Booked!</h2>
             <p>
@@ -55,12 +82,7 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
             ref={ticketRef}
           >
             <div className="relative">
-              <Image
-                src="/bg.png"
-                alt="background"
-                width={320}
-                height={600}
-              ></Image>
+              <Image src="/bg.png" alt="background" width={320} height={600} />
             </div>
             <div className="box absolute top-7 w-[290px] h-[470px] rounded-2xl border-2 border-[#24A0B5]">
               <div className="text-center space-y-1 p-2 pb-6">
@@ -68,16 +90,14 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
                   Techember Fest &quot;25
                 </h2>
                 <div className="text-center text-xs">
-                  <p>
-                    📍 04 Rumens road, Ikoyi, Lagos{" "}
-                    <p className="py-1"> 📅 March 15, 2025 | 7:00 PM </p>
-                  </p>
+                  <p>📍 04 Rumens road, Ikoyi, Lagos</p>
+                  <p className="py-1">📅 March 15, 2025 | 7:00 PM</p>
                 </div>
               </div>
               <Box text="border-4 w-36 h-36 border-[#24A0B580] mx-auto pt-5 mb-5 bg-[#031E211A] backdrop-blur-sm">
                 {attendeeInfo.profilePhoto ? (
                   <Image
-                    src={attendeeInfo.profilePhoto || "/placeholder.svg"}
+                    src={attendeeInfo.profilePhoto}
                     alt="Profile"
                     layout="fill"
                     objectFit="cover"
@@ -90,7 +110,7 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
                 )}
               </Box>
               <Box text="m-2 py-3 rounded-lg border-[#133D44] bg-[#08343C]">
-                <div className="grid grid-cols-2 text-left gap-2 text-xs border-b border-[#12464E] ">
+                <div className="grid grid-cols-2 text-left gap-2 text-xs border-b border-[#12464E]">
                   <div className="space-y-1 border-r border-[#12464E]">
                     <div className="pb-2">
                       <label htmlFor="name" className="text-gray-400">
@@ -108,7 +128,7 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 text-left gap-2 text-xs border-b border-[#12464E] ">
+                <div className="grid grid-cols-2 text-left gap-2 text-xs border-b border-[#12464E]">
                   <div className="space-y-1 border-r border-[#12464E]">
                     <div className="py-1">
                       <label htmlFor="name" className="text-gray-400">
@@ -126,7 +146,7 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
                     </div>
                   </div>
                 </div>
-                <div className=" text-left text-xs border-[#12464E] ">
+                <div className="text-left text-xs border-[#12464E]">
                   <div>
                     <div className="py-[0.4rem]">
                       <label htmlFor="name" className="text-gray-400 pb-2">
@@ -141,12 +161,12 @@ export default function SuccessScreen({ ticketInfo, attendeeInfo }) {
               </Box>
             </div>
             <Image
-              src={"/barcode.png"}
+              src="/barcode.png"
               width={250}
               height={100}
-              alt=""
+              alt="Barcode"
               className="absolute bottom-5"
-            ></Image>
+            />
           </div>
           <div className="flex gap-3 flex-col lg:flex-row">
             <Link href="/" className="w-full">

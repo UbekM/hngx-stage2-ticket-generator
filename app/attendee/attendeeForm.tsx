@@ -10,7 +10,18 @@ import Box from "../components/box";
 import Button from "../components/button";
 import Image from "next/image";
 
-export default function AttendeeForm({ onFormSubmit }) {
+export interface AttendeeFormData {
+  name: string;
+  email: string;
+  specialRequest?: string;
+  profilePhoto?: string;
+}
+
+export default function AttendeeForm({
+  onFormSubmitAction,
+}: {
+  onFormSubmitAction: (data: AttendeeFormData) => void;
+}) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [cloudinaryUrl, setCloudinaryUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -29,8 +40,6 @@ export default function AttendeeForm({ onFormSubmit }) {
   };
 
   const handleUpload = async (file: File) => {
-    setUploading(true);
-
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "ml_default");
@@ -49,7 +58,6 @@ export default function AttendeeForm({ onFormSubmit }) {
     } catch (error) {
       console.error("Upload failed", error);
     } finally {
-      setUploading(false);
     }
   };
 
@@ -77,11 +85,11 @@ export default function AttendeeForm({ onFormSubmit }) {
     if (Object.keys(errors).length > 0 || !name.trim() || !email.trim()) {
       return;
     }
-    onFormSubmit({
+    onFormSubmitAction({
       name,
       email,
       specialRequest,
-      profilePhoto: cloudinaryUrl || previewUrl,
+      profilePhoto: cloudinaryUrl ?? previewUrl ?? undefined,
     });
   };
 

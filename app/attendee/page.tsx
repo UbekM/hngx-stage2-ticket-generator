@@ -1,5 +1,5 @@
 /** @format */
-
+"use client";
 import NavBar from "../components/navbar";
 import AttendeeForm from "./attendeeForm";
 
@@ -13,7 +13,9 @@ export default function Attendee() {
       className="md:px-14 px-6 py-5 text-white "
     >
       <NavBar />
-      <AttendeeForm />
+      <AttendeeForm
+        onFormSubmitAction={(data) => console.log("Form submitted:", data)}
+      />
     </div>
   );
 }
