@@ -161,7 +161,7 @@ export default function SuccessScreen({
               </Box>
             </div>
             <Image
-              src="/barcode.png"
+              src="/barcodes.png"
               width={250}
               height={100}
               alt="Barcode"
